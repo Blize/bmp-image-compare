@@ -1,0 +1,22 @@
+.DS_Store
+
+#Compiled File Windows
+*.exe
+
+#Compiled File MacOS
+*.out
+bmp_compare
+
+#Addition
+.vscode
+.idea
+
+# storage
+*.txt
+
+# binary
+terminal_chess
+
+# build
+build
+*.o
