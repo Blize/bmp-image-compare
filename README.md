@@ -1,18 +1,19 @@
 # bmp-image comparison library
 
-This library is designed to compare two BMP images and returns an perentage of how similiar they are to each other.
+This library is designed to compare two BMP images and returns an percentage of how similar they are to each other.
 Currently there is only one way of comparing images, but more will be added in the future.
 
 ## Info
 
-This is a rather small project for me to learn more about C and image processing. As its a lot of fun to write c.
-But I think this gives and pretty good insight on how to read BMP files and do diffrent things with them.
+This is a rather small project for me to learn more about C and image processing. As its a lot of fun to write C.
+But I think this gives and pretty good insight on how to read BMP files and do different things with them.
+If you are interested in more info I have an image in /info about BMP headers.
 
 ## Installation
 
 To install the library, simply run the following commands:
 
-Make sure you have an c compiler installed and make.
+Make sure you have an c compiler installed and make (for Makefile).
 
 1. Clone the repository
 
@@ -26,7 +27,7 @@ git clone https://github.com/Blize/bmp-image-compare.git
 make
 ```
 
-3. Run the exectuable
+3. Run the executable
 
 ```bash
 ./bmp_compare static/1.bmp static/1_lines.bmp
@@ -34,8 +35,8 @@ make
 
 ## Usage / Current Features
 
-The library currently only supports comparing two images and returning a percentage of how similiar they are to each other.
-That said the comparission is between every R / G / B value of every pixel between the two images. After that it sums then and divides by the total amount of pixels to get a percentage.
+The library currently only supports comparing two images and returning a percentage of how similar they are to each other.
+That said the comparison is between every R / G / B value of every pixel between the two images. After that it sums them and divides by the total amount of pixels to get the percentage.
 With that we get similarity values for R / G / B and overall.
 
 This method is good for comparing images that are the same, but have been modified in some way, like adding lines to the image.
@@ -85,11 +86,14 @@ For example comparing this image...
 ![image](static/1_brighter.bmp)
 ...will give us a low similarity value, since the images are different in brightness.
 
+So the current use case is, if you have two images which looks nearly identical and you want to check if there is any difference. As we check every single RGB value
+we will only have 100% if its exactly the same.
+
 ## Future Features
 
 I want to add some more features in the future if I have time and motivation for this.
 The main two are following:
 
 - Add more ways of comparing images -> starting with the brightness / contrast / shadow / color difference.
-- Add diffrent Bitmap file types support -> currently only supports 24-bit BMP files.
+- Add different Bitmap file types support -> currently only supports 24-bit BMP files.
 - Add different image resolutions support -> currently only supports the same resolutions of the two images.
