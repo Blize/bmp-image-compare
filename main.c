@@ -109,7 +109,6 @@ RGB_Array readRGBValues(FILE *bmpFile, BITMAP_FILE_HEADER header, BITMAP_INFO_HE
 }
 
 
-
 void compareRGBArrays(RGB_Array arr1, RGB_Array arr2) {
     if (arr1.width != arr2.width || arr1.height != arr2.height) {
         printf("Arrays have different dimensions, cannot compare.\n");
@@ -141,7 +140,6 @@ void compareRGBArrays(RGB_Array arr1, RGB_Array arr2) {
     printf("Average Blue Similarity: %.2f%%\n", avgBlue);
     printf("Average Overall Similarity: %.2f%%\n", overallAvg);
 }
-
 
 
 int main(int argc, char *argv[]) {
@@ -193,4 +191,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-

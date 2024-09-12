@@ -1,7 +1,6 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

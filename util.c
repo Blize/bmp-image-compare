@@ -47,4 +47,3 @@ float compare_values(int *a, int *b) {
     float diff = abs(*a - *b) / 255.0; 
     return 100.0 * (1.0 - pow(diff, 0.5));  // We pow by 0.5 to drop off exponentially
 }
-
