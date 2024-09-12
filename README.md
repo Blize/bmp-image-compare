@@ -17,7 +17,7 @@ Make sure you have an c compiler installed and make.
 1. Clone the repository
 
 ```bash
-git clone https://github.com/Blize/bmp-image-comparison.git
+git clone https://github.com/Blize/bmp-image-compare.git
 ```
 
 2. Build the project
