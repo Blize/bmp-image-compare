@@ -44,6 +44,10 @@ bool imageCheck(FILE *file, BITMAP_FILE_HEADER *header, BITMAP_INFO_HEADER *info
 
 
 float compare_values(int *a, int *b) {
+    if (*a < 0 || *a > 255 || *b < 0 || *b > 255) {
+        printf("Invalid RGB value: %d, %d\n", *a, *b);
+        return 0.0;
+    }
     float diff = abs(*a - *b) / 255.0; 
     return 100.0 * (1.0 - pow(diff, 0.5));  // We pow by 0.5 to drop off exponentially
 }
