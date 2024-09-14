@@ -5,10 +5,10 @@ CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -std=c11
 
 # Source files
-SRCS = main.c util.c
+SRCS = src/main.c src/util/util.c src/compare/compare.c
 
 # Object files
-OBJS = main.o util.o
+OBJS = main.o util.o compare.o
 
 # Executable name
 TARGET = bmp_compare
@@ -21,12 +21,16 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
 # Rule to compile main.o
-main.o: main.c util.h
-	$(CC) $(CFLAGS) -c main.c
+main.o: src/main.c src/util/util.h src/compare/compare.h
+	$(CC) $(CFLAGS) -c src/main.c
 
 # Rule to compile util.o
-util.o: util.c util.h
-	$(CC) $(CFLAGS) -c util.c
+util.o: src/util/util.c src/util/util.h
+	$(CC) $(CFLAGS) -c src/util/util.c
+
+# Rule to compile compare.o
+compare.o: src/compare/compare.c src/compare/compare.h
+	$(CC) $(CFLAGS) -c src/compare/compare.c
 
 # Clean the build
 clean:
