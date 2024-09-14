@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "util.h"
 
 void freeRGBArray(RGB_Array *arr) {
@@ -204,8 +205,24 @@ void compareBrightnessShift(RGB_Array arr1, RGB_Array arr2) {
 
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
+    if (argc != 3 && argc != 2) {
         printf("Usage: %s <file1.bmp> <file2.bmp>\n", argv[0]);
+        printf("For more information, use: %s -h or --help\n", argv[0]);
+        return 1;
+    }
+
+
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+        printf("Usage: %s <file1.bmp> <file2.bmp>\n", argv[0]);
+        printf("\n");
+        printf("This program compares two BMP images and outputs the similarity between them.\n");
+        printf("\n");
+        printf("1. Compare every RGB Value of the two images\n");
+        printf("   Value n1 and n2 will be given into the formula: 100 * (1 - |n1 - n2| / 255)^0.5\n");
+        printf("\n");
+        printf("2. Compare the Brightness Shift of the two images\n");
+        printf("   The average Brightness Shift of the two images will be calculated and then compared to the Brightness Shift of every pixel\n");
+
         return 1;
     }
 
