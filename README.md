@@ -177,7 +177,7 @@ From this image...
 
 ...we get this image...
 
-![image](static/example/edges/edges-detected2.bmp)
+![image](static/example/edges/edges_detected2.bmp)
 
 ## Future Features
 
