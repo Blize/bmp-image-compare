@@ -1,4 +1,5 @@
 #include "../util/util.h"
+#include <math.h>
 #include <stdlib.h>
 
 void compareRGBArrays(RGB_Array arr1, RGB_Array arr2) {
@@ -90,4 +91,48 @@ void compareBrightnessShift(RGB_Array arr1, RGB_Array arr2) {
     printf("Average Blue Brightness Shift: %.2f%%\n", avgBlueSimilarity);
     printf("Average Overall Brightness Shift: %.2f%%\n", overallAvg);
     printf("----------------------------------------------\n");
+    printf("\n");
+}
+
+
+void compareShapes(RGB_Array arr1, RGB_Array arr2) {
+    if (arr1.width != arr2.width || arr1.height != arr2.height) {
+        printf("Images have different dimensions, cannot compare.\n");
+        return;
+    }
+
+    int width = arr1.width;
+    int height = arr1.height;
+
+    int* grayscale1 = rgbToGrayscale(arr1);
+    int* grayscale2 = rgbToGrayscale(arr2);
+
+    int* edges1 = sobelOperator(width, height, grayscale1);
+    int* edges2 = sobelOperator(width, height, grayscale2);
+
+    int thresholdValue = 128;  
+    int* binary1 = thresholdEdges(width, height, edges1, thresholdValue);
+    int* binary2 = thresholdEdges(width, height, edges2, thresholdValue);
+
+    
+    writeBMP("edges_detected.bmp", arr1.width, arr1.height, binary1);
+    writeBMP("edges_detected2.bmp", arr2.width, arr2.height, binary2);
+
+    int differences = compareBinaryImages(width, height, binary1, binary2);
+
+    int similarity = 100 - (int)(pow(((double)differences / (width * height)), 0.75) * 100);
+
+    // Free allocated memory
+    free(grayscale1);
+    free(grayscale2);
+    free(edges1);
+    free(edges2);
+    free(binary1);
+    free(binary2);
+
+    printf("------- Image Comparison Results Shape -------\n");
+    printf("Number of differing pixels: %d\n", differences);
+    printf("Similarity: %d%%\n", similarity);
+    printf("----------------------------------------------\n");
+    printf("\n");
 }

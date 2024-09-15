@@ -87,6 +87,11 @@ Average Green Brightness Shift: 99.88%
 Average Blue Brightness Shift: 99.87%
 Average Overall Brightness Shift: 99.87%
 ----------------------------------------------
+
+------- Image Comparison Results Shape -------
+Number of differing pixels: 1022
+Similarity: 99%
+----------------------------------------------
 ```
 
 But if we now have the exact same image with different brightness.
@@ -136,16 +141,48 @@ Average Green Brightness Shift: 78.32%
 Average Blue Brightness Shift: 74.29%
 Average Overall Brightness Shift: 75.45%
 ----------------------------------------------
+
+------- Image Comparison Results Shape -------
+Number of differing pixels: 19990
+Similarity: 86%
+----------------------------------------------
 ```
 
 **Note** that the `Image Comparison Results Color Shift` can be lower than expected as the Algo is not perfect rn, but with every value higher than 60%
 you can expect the image to be practically the same just with different brightness.
+
+Newly added is now also shape comparison using the sobel operator. We also create a new image with the edges of the image.
+This could look like this:
+
+From this image...
+![image](static/1.bmp)
+
+...we get this image...
+
+![image](static/example/edges/edges_detected.bmp)
+
+Or more fancy like this:
+
+From this image...
+
+![image](static/other_res/shapes/cyberpunk-character.bmp)
+
+...we get this image...
+
+![image](static/example/edges/edges_detected3.bmp)
+
+From this image...
+
+![image](static/other_res/shapes/mario-luigi.bmp)
+
+...we get this image...
+
+![image](static/example/edges/edges-detected2.bmp)
 
 ## Future Features
 
 I want to add some more features in the future if I have time and motivation for this.
 The main two are following:
 
-- Add more ways of comparing images -> Recognize shapes
 - Add different Bitmap file types support -> currently only supports 24-bit BMP files.
 - Add different image resolutions support -> currently only supports the same resolutions of the two images.

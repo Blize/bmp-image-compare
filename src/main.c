@@ -168,6 +168,13 @@ int main(int argc, char *argv[]) {
     
     compareRGBArrays(arr1, arr2);
     compareBrightnessShift(arr1, arr2);
+    compareShapes(arr1, arr2);
+
+    int *grayscale = rgbToGrayscale(arr1);
+    int *edges = sobelOperator(arr1.width, arr1.height, grayscale);
+    int *binaryImage = thresholdEdges(arr1.width, arr1.height, edges, 128);
+
+    writeBMP("edges_detected.bmp", arr1.width, arr1.height, binaryImage);
 
     // Close both BMP files and free Memory
     fclose(file1);

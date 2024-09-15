@@ -37,3 +37,5 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 	rm -f image1.txt
 	rm -f image2.txt
+	rm -f edges_detected.bmp
+	rm -f edges_detected2.bmp

@@ -48,5 +48,11 @@ typedef struct {
 
 bool imageCheck(FILE *file, BITMAP_FILE_HEADER *header, BITMAP_INFO_HEADER *infoHeader, const char *filename);
 float compare_values(int *a, int *b);
+int* rgbToGrayscale(RGB_Array arr);
+int* sobelOperator(int width, int height, int *grayscale);
+int* thresholdEdges(int width, int height, int *edges, int thresholdValue);
+int compareBinaryImages(int width, int height, int *binaryOne, int *binaryTwo);
+void writeBMP(const char *filename, int width, int height, int *binaryImage);
+
 
 #endif
