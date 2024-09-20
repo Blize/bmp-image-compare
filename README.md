@@ -1,7 +1,6 @@
 # bmp-image comparison library
 
 This library is designed to compare two BMP images and returns an percentage of how similar they are to each other.
-Currently there is only one way of comparing images, but more will be added in the future.
 
 ## Info
 
@@ -35,19 +34,10 @@ make
 
 ## Usage / Current Features
 
-The library currently only supports only two methods.
+This library has a few different ways of comparing the images. For example comparing every RGB to each other
+or comparing if there is an brightness shift in the image. And I am also working on comparing shapes in the image using the sobel operator.
 
-The first method is comparing every R / G / B value of every pixel between the two images. After that it sums them and divides by the total amount of pixels to get the percentage.
-With that we get similarity values for R / G / B and overall.
-
-The first method is good for comparing images that are the same, but have been modified in some way, like adding lines to the image.
-For example comparing this image...
-![image](static/1.bmp)
-...with this image...
-![image](static/1_lines.bmp)
-
-...will gives us an high `Image Comparison Results every RGB`, since the only difference is the lines added to the second image.
-Example output:
+An example output could look like this (comparing `static/1.bmp` with `static/1_lines.bmp`):
 
 ```
 -------------- BMP File Header --------------
@@ -74,110 +64,33 @@ Compression: 0 (should be 0 for no compression)
 Image Size: 817920 bytes (biSizeImage)
 ---------------------------------------------
 
----- Image Comparison Results every RGB -----
+---- Image Comparison Results: Every RGB -----
 Average Red Similarity: 99.86%
 Average Green Similarity: 99.88%
 Average Blue Similarity: 99.87%
 Average Overall Similarity: 99.87%
+
 ----------------------------------------------
 
----- Image Comparison Results Color Shift ----
+---- Image Comparison Results: Color Shift ---
 Average Red Brightness Shift: 99.86%
 Average Green Brightness Shift: 99.88%
 Average Blue Brightness Shift: 99.87%
 Average Overall Brightness Shift: 99.87%
 ----------------------------------------------
 
-------- Image Comparison Results Shape -------
+------- Image Comparison Results: Shape ------
 Number of differing pixels: 1022
 Similarity: 99%
 ----------------------------------------------
 ```
 
-But if we now have the exact same image with different brightness.
-For example comparing this image...
-![image](static/1.bmp)
-...with this image...
-![image](static/1_brighter.bmp)
-...will gives us an low `Image Comparison Results every RGB`, since every pixel is different. But the `Image Comparison Results Color Shift` will be higher because we can calculate and check if the increase or decrease of every pixel is similar.
+### Explanation
 
-Example output:
-
-```
--------------- BMP File Header --------------
-File Path: static/1.bmp
-File Type: 4d42
-File Size: 818058 bytes
-Pixel Data Offset: 138 bytes
-Image Width: 640 pixels
-Image Height: 426 pixels
-Bit Count: 24 (should be 24 for 24-bit)
-Compression: 0 (should be 0 for no compression)
-Image Size: 817920 bytes (biSizeImage)
----------------------------------------------
-
--------------- BMP File Header --------------
-File Path: static/1_brighter.bmp
-File Type: 4d42
-File Size: 818058 bytes
-Pixel Data Offset: 138 bytes
-Image Width: 640 pixels
-Image Height: 426 pixels
-Bit Count: 24 (should be 24 for 24-bit)
-Compression: 0 (should be 0 for no compression)
-Image Size: 817920 bytes (biSizeImage)
----------------------------------------------
-
----- Image Comparison Results every RGB -----
-Average Red Similarity: 55.61%
-Average Green Similarity: 51.58%
-Average Blue Similarity: 59.40%
-Average Overall Similarity: 55.53%
-----------------------------------------------
-
----- Image Comparison Results Color Shift ----
-Average Red Brightness Shift: 73.74%
-Average Green Brightness Shift: 78.32%
-Average Blue Brightness Shift: 74.29%
-Average Overall Brightness Shift: 75.45%
-----------------------------------------------
-
-------- Image Comparison Results Shape -------
-Number of differing pixels: 19990
-Similarity: 86%
-----------------------------------------------
-```
-
-**Note** that the `Image Comparison Results Color Shift` can be lower than expected as the Algo is not perfect rn, but with every value higher than 60%
-you can expect the image to be practically the same just with different brightness.
-
-Newly added is now also shape comparison using the sobel operator. We also create a new image with the edges of the image.
-This could look like this:
-
-From this image...
-![image](static/1.bmp)
-
-...we get this image...
-
-![image](static/example/edges/edges_detected.bmp)
-
-Or more fancy like this:
-
-From this image...
-
-![image](static/other_res/shapes/cyberpunk-character.bmp)
-
-...we get this image...
-
-![image](static/example/edges/edges_detected3.bmp)
-
-From this image...
-
-![image](static/other_res/shapes/mario-luigi.bmp)
-
-...we get this image...
-
-![image](static/example/edges/edges_detected2.bmp)
+1. `Every RGB` compares every pixel in the image to each other and calculates the similarity using the `compare_values` function found in [util.c](./src/util/util.c).
+2. `Color Shift` calculates the average difference of the R/G/B values and checks if they are increasing or decreasing all by the same amount.
+3. `Shape` compares the shapes in the image using the sobel operator. This is still a work in progress and is not fully implemented yet. Currently we just count if
+   the pixels that are edges are the same amount in both images. _Note_ though that we also generate a new image with the edges found in the image (Find examples in [examples directory](./static/example/edges/)).
 
 ## Future Features
 
@@ -185,4 +98,4 @@ I want to add some more features in the future if I have time and motivation for
 The main two are following:
 
 - Add different Bitmap file types support -> currently only supports 24-bit BMP files.
-- Add different image resolutions support -> currently only supports the same resolutions of the two images.
+- Recognize patterns in binary edges

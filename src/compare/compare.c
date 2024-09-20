@@ -29,7 +29,7 @@ void compareRGBArrays(RGB_Array arr1, RGB_Array arr2) {
     float overallAvg = (avgRed + avgGreen + avgBlue) / 3.0;
 
 
-    printf("---- Image Comparison Results every RGB -----\n");
+    printf("---- Image Comparison Results: Every RGB -----\n");
     printf("Average Red Similarity: %.2f%%\n", avgRed);
     printf("Average Green Similarity: %.2f%%\n", avgGreen);
     printf("Average Blue Similarity: %.2f%%\n", avgBlue);
@@ -85,7 +85,7 @@ void compareBrightnessShift(RGB_Array arr1, RGB_Array arr2) {
 
     float overallAvg = (avgRedSimilarity + avgGreenSimilarity + avgBlueSimilarity) / 3.0;
 
-    printf("---- Image Comparison Results Color Shift ----\n");
+    printf("---- Image Comparison Results: Color Shift ---\n");
     printf("Average Red Brightness Shift: %.2f%%\n", avgRedSimilarity);
     printf("Average Green Brightness Shift: %.2f%%\n", avgGreenSimilarity);
     printf("Average Blue Brightness Shift: %.2f%%\n", avgBlueSimilarity);
@@ -130,7 +130,7 @@ void compareShapes(RGB_Array arr1, RGB_Array arr2) {
     free(binary1);
     free(binary2);
 
-    printf("------- Image Comparison Results Shape -------\n");
+    printf("------- Image Comparison Results: Shape ------\n");
     printf("Number of differing pixels: %d\n", differences);
     printf("Similarity: %d%%\n", similarity);
     printf("----------------------------------------------\n");
