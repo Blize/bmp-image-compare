@@ -44,15 +44,24 @@ typedef struct {
     int height;
 } RGB_Array;
 
+
+typedef struct {
+    RGB_Array resized;
+    RGB_Array original;
+} Resized_Result;
+
 #pragma pack(pop)
 
 bool imageCheck(FILE *file, BITMAP_FILE_HEADER *header, BITMAP_INFO_HEADER *infoHeader, const char *filename);
+void writeRGBValuesToTextFile(FILE *bmpFile, BITMAP_FILE_HEADER header, BITMAP_INFO_HEADER infoHeader, const char *outputFilename);
+RGB_Array readRGBValues(FILE *bmpFile, BITMAP_FILE_HEADER header, BITMAP_INFO_HEADER infoHeader);
 float compare_values(int *a, int *b);
 int* rgbToGrayscale(RGB_Array arr);
 int* sobelOperator(int width, int height, int *grayscale);
 int* thresholdEdges(int width, int height, int *edges, int thresholdValue);
 int compareBinaryImages(int width, int height, int *binaryOne, int *binaryTwo);
 void writeBMP(const char *filename, int width, int height, int *binaryImage);
+Resized_Result setImagesToSameSize(RGB_Array arr1, RGB_Array arr2);
 
 
 #endif

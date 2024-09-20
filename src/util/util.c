@@ -42,6 +42,104 @@ bool imageCheck(FILE *file, BITMAP_FILE_HEADER *header, BITMAP_INFO_HEADER *info
     return true;
 }
 
+void writeRGBValuesToTextFile(FILE *bmpFile, BITMAP_FILE_HEADER header, BITMAP_INFO_HEADER infoHeader, const char *outputFilename) {
+    // Calculate row size (with padding)
+    int rowSize = (infoHeader.biWidth * 3 + 3) & ~3;
+
+    // Move to pixel data
+    fseek(bmpFile, header.bfOffBits, SEEK_SET);
+
+    // Allocate memory for one row of pixel data
+    BYTE *pixelRow = malloc(rowSize);
+    if (!pixelRow) {
+        printf("Memory allocation failed.\n");
+        fclose(bmpFile);
+        return;
+    }
+
+    // Open the output file to write RGB values in human-readable format
+    FILE *outputFile = fopen(outputFilename, "w");
+    if (!outputFile) {
+        printf("Error opening output file: %s\n", outputFilename);
+        free(pixelRow);
+        fclose(bmpFile);
+        return;
+    }
+
+    // Read and write pixel data row by row
+    for (int i = 0; i < infoHeader.biHeight; i++) {
+        fread(pixelRow, rowSize, 1, bmpFile);
+        for (int j = 0; j < infoHeader.biWidth; j++) {
+            BYTE blue = pixelRow[j * 3];
+            BYTE green = pixelRow[j * 3 + 1];
+            BYTE red = pixelRow[j * 3 + 2];
+
+            // Write RGB values in text format
+            fprintf(outputFile, "%d,%d,%d\n", red, green, blue);
+        }
+    }
+
+    // Cleanup
+    free(pixelRow);
+    fclose(outputFile);
+}
+
+RGB_Array readRGBValues(FILE *bmpFile, BITMAP_FILE_HEADER header, BITMAP_INFO_HEADER infoHeader) {
+    // Create an RGB_Array struct to store the values
+    RGB_Array rgbArray;
+    rgbArray.width = abs(infoHeader.biWidth);
+    rgbArray.height = abs(infoHeader.biHeight);
+
+    // Calculate the number of pixels
+    int numPixels = rgbArray.width * rgbArray.height;
+
+    // Allocate memory for red, green, and blue arrays
+    rgbArray.red = (int *)malloc(numPixels * sizeof(int));
+    rgbArray.green = (int *)malloc(numPixels * sizeof(int));
+    rgbArray.blue = (int *)malloc(numPixels * sizeof(int));
+
+    if (!rgbArray.red || !rgbArray.green || !rgbArray.blue) {
+        printf("Memory allocation failed.\n");
+        // Free any memory already allocated
+        free(rgbArray.red);
+        free(rgbArray.green);
+        free(rgbArray.blue);
+        exit(1);
+    }
+
+    // Calculate row size (with padding)
+    int rowSize = (infoHeader.biWidth * 3 + 3) & ~3;
+
+    // Move to pixel data
+    fseek(bmpFile, header.bfOffBits, SEEK_SET);
+
+    // Allocate memory for one row of pixel data
+    BYTE *pixelRow = malloc(rowSize);
+    if (!pixelRow) {
+        printf("Memory allocation failed for pixel row.\n");
+        free(rgbArray.red);
+        free(rgbArray.green);
+        free(rgbArray.blue);
+        exit(1);
+    }
+
+    // Read pixel data row by row and store in RGB_Array
+    int pixelIndex = 0;
+    for (int i = 0; i < infoHeader.biHeight; i++) {
+        fread(pixelRow, rowSize, 1, bmpFile);
+        for (int j = 0; j < infoHeader.biWidth; j++) {
+            rgbArray.blue[pixelIndex] = pixelRow[j * 3];
+            rgbArray.green[pixelIndex] = pixelRow[j * 3 + 1];
+            rgbArray.red[pixelIndex] = pixelRow[j * 3 + 2];
+            pixelIndex++;
+        }
+    }
+
+    // Cleanup
+    free(pixelRow);
+
+    return rgbArray;
+}
 
 float compare_values(int *a, int *b) {
     if (*a < 0 || *a > 255 || *b < 0 || *b > 255) {
@@ -52,6 +150,60 @@ float compare_values(int *a, int *b) {
     return 100.0 * (1.0 - pow(diff, 0.5)); 
 }
 
+
+Resized_Result setImagesToSameSize(RGB_Array arr1, RGB_Array arr2) {
+
+    Resized_Result result;
+    RGB_Array *smallerImage, *largerImage;
+    if (arr1.width * abs(arr1.height) < arr2.width * abs(arr2.height)) {
+        smallerImage = &arr1;
+        largerImage = &arr2;
+    } else {
+        smallerImage = &arr2;
+        largerImage = &arr1;
+    }
+
+    result.original = *smallerImage;
+
+    RGB_Array newImage;
+    newImage.width = smallerImage->width;
+    newImage.height = abs(smallerImage->height);
+
+    int totalPixels = newImage.width * newImage.height;
+    newImage.red = (int *)malloc(totalPixels * sizeof(int));
+    newImage.green = (int *)malloc(totalPixels * sizeof(int));
+    newImage.blue = (int *)malloc(totalPixels * sizeof(int));
+
+    if (!newImage.red || !newImage.green || !newImage.blue) {
+        printf("Memory allocation failed.\n");
+        free(newImage.red);
+        free(newImage.green);
+        free(newImage.blue);
+        exit(1);
+    }
+    
+    double scaleX = (double)largerImage->width / newImage.width;
+    double scaleY = (double)largerImage->height / newImage.height;
+
+    for (int y = 0; y < newImage.height; y++) {
+        for (int x = 0; x < newImage.width; x++) {
+
+            int srcX = (int)(x * scaleX);
+            int srcY = (int)(y * scaleY);
+
+            int srcIndex = srcY * largerImage->width + srcX;
+            int destIndex = y * newImage.width + x;
+
+            newImage.red[destIndex] = largerImage->red[srcIndex];
+            newImage.green[destIndex] = largerImage->green[srcIndex];
+            newImage.blue[destIndex] = largerImage->blue[srcIndex];
+        }
+    }
+
+
+    result.resized = newImage;
+    return result;
+}
 
 /// Convert an RGB array to a grayscale array
 /// Using the NTSC formula: Y = 0.3R + 0.59G + 0.11B
@@ -97,11 +249,10 @@ int* sobelOperator(int width, int height, int *grayscale) {
 int* thresholdEdges(int width, int height, int *edges, int thresholdValue) {
     int totalPixels = width * height;
     int* binaryEdges = (int *)malloc(totalPixels * sizeof(int));
-    
+
     for (int i = 0; i < totalPixels; i++) {
-        binaryEdges[i] = (edges[i] > thresholdValue) ? 255 : 0; 
+        binaryEdges[i] = (edges[i] > thresholdValue) ? 255 : 0;  
     }
-    
     return binaryEdges;  
 }
 
